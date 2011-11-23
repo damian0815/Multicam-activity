@@ -31,17 +31,18 @@ void testApp::setup(){
 		out_act[i] = 0;
 		ofLog(OF_LOG_NOTICE, "*** finished with camera %i", i );
 	}
-for(inti=0; i<2; i++ )
-{
-if ( !inited[i] 0 
-continue;
+    for(int i=0; i<2; i++ )
+    {
+        if ( !inited[i] )
+            continue;
 
-				working[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-			curr_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-			diff_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-			accum[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-//		accum_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-}	
+        working[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+        curr_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+        diff_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+        accum[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+        //		accum_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+    }	
+    
 	ofxXmlSettings s;
 	s.loadFile("settings.xml");
 	s.pushTag("settings");
