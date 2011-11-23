@@ -5,16 +5,22 @@
 void testApp::setup(){
 	
 	ofSetFrameRate( 25.0f );
+
 	ofSetLogLevel( OF_LOG_NOTICE );
 
+	cams[0].listDevices();
+	
 	for ( int i=0; i<2; i++ )
 	{
-		cams[i].initGrabber( 640, 480 );
-		working[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-		curr_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-		diff_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-		accum[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
-//		accum_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+		ofLog(OF_LOG_NOTICE, "*** initing camera %i", i );
+		cams[i].setDeviceID(i);
+		inited[i] = cams[i].initGrabber( 640, 480 );
+		if ( !inited[i] )
+			ofLog( OF_LOG_ERROR, "*** couldn't open cam %i", i );
+		else
+		{
+			ofLog(OF_LOG_NOTICE, "*** inited camera %i %fx%f", i, cams[i].getWidth(), cams[i].getHeight() );
+	}
 		
 		
 		max_act[i] = 0;
@@ -23,8 +29,19 @@ void testApp::setup(){
 		high_quartile[i] = 255;
 		snap_background[i] = true;
 		out_act[i] = 0;
+		ofLog(OF_LOG_NOTICE, "*** finished with camera %i", i );
 	}
-	
+for(inti=0; i<2; i++ )
+{
+if ( !inited[i] 0 
+continue;
+
+				working[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+			curr_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+			diff_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+			accum[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+//		accum_8bit[i].allocate( cams[i].getWidth(), cams[i].getHeight() );
+}	
 	ofxXmlSettings s;
 	s.loadFile("settings.xml");
 	s.pushTag("settings");
@@ -41,6 +58,9 @@ void testApp::update(){
 	
 	for ( int i=0; i<2; i++ )
 	{
+		if ( !inited[i] )
+			continue;
+
 		cams[i].update();
 		
 		if ( cams[i].isFrameNew() )
@@ -124,7 +144,19 @@ void testApp::update(){
 
 	ofxOscMessage m;
 	m.setAddress("/tracking/activity");
-	m.addFloatArg( (out_act[0]+out_act[1])/2.0f );
+	float total_act = 0;
+	int count = 0;
+	for ( int i=0; i<2; i++) 
+	{
+		if ( inited[i] ){
+			total_act += out_act[i];
+			count++;
+		}
+	}
+	if ( count == 0 )
+		m.addFloatArg( 1.0f );
+	else
+		m.addFloatArg( total_act/count );
 	osc_sender.sendMessage( m );
 
 }
@@ -133,6 +165,8 @@ void testApp::update(){
 void testApp::draw(){
 	for ( int i=0; i<2; i++ )
 	{
+		if ( !inited[i] )
+			continue;
 		ofSetHexColor( 0xffffff );
 		float half_screen_w = ofGetWidth()/2;
 		float scale = half_screen_w/cams[i].getWidth();

@@ -23,6 +23,7 @@ class testApp : public ofBaseApp{
 		
 	
 	ofVideoGrabber cams[2];
+	bool inited[2];
 	
 	ofxCvColorImage working[2];
 
