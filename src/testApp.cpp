@@ -118,20 +118,20 @@ void testApp::update(){
 			//   max_act <- max_act * 0.99f
 			if ( total > max_act[i] )
 			{
-				max_act[i] = total;
+				max_act[i] = total*1.2f;
 			}
 			else
 			{
-				max_act[i] = max_act[i]*0.990f + total*0.001f;
+				max_act[i] = max_act[i]*0.990f + total*1.2f*0.001f;
 			}
 			
 			if ( total < min_act[i] )
 			{	
-				min_act[i] = total;
+				min_act[i] = total/1.2f;
 			}
 			else
 			{
-				min_act[i] = min_act[i]*0.999f + total*0.001f;
+				min_act[i] = min_act[i]*0.999f + (total/1.2f)*0.001f;
 			}
 			
 			
